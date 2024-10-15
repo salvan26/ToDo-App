@@ -53,7 +53,7 @@ import PropTypes from 'prop-types';
             <div className='view'>
                 <input className='toggle' type="checkbox" checked={done} onChange={onToggleDone}/>
                 <label onClick={onToggleDone}>
-                    <span className={className} onClick={onToggleDone}>{text}</span>
+                    <span className={className} onChange={onToggleDone}>{text}</span>
                     <span className='created' onClick={onToggleDone}>
                         
                           {`created ${formatDistanceToNow(status.toString(), {
