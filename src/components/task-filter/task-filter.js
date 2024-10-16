@@ -13,12 +13,7 @@ function TaskFilter({ filter, onFilterChange }) {
 
     return (
       <li key={name}>
-        <button
-          key={name}
-          type="button"
-          onClick={() => onFilterChange(name)}
-          className={classNames}
-        >
+        <button key={name} type="button" onClick={() => onFilterChange(name)} className={classNames}>
           {text}
         </button>
       </li>
@@ -33,11 +28,7 @@ function TaskFilter({ filter, onFilterChange }) {
     filter: PropTypes.string,
     onFilterChange: PropTypes.func,
   };
-  return (
-    <ul className="filters">
-      {buttons}
-    </ul>
-  );
+  return <ul className="filters">{buttons}</ul>;
 }
 
 export default TaskFilter;

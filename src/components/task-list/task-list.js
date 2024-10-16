@@ -1,19 +1,16 @@
 import './task-list.css';
 import PropTypes from 'prop-types';
+
 import Task from '../task';
 
-function TaskList({
-  data, onDeleted,
-  onToggleDone, onEdit, onChange, onSubmit, value,
-}) {
+function TaskList({ data, onDeleted, onToggleDone, onEdit, onChange, onSubmit, value }) {
   const elements = data.map((item) => {
-    const {
-      id, className, status, isEditing, ...itemProps
-    } = item;
+    const { id, className, status, isEditing, text, done } = item;
     return (
       <li key={id} className={className}>
         <Task
-          {...itemProps}
+          done={done}
+          text={text}
           onDeleted={() => onDeleted(id)}
           status={status}
           onToggleDone={() => onToggleDone(id)}
@@ -35,14 +32,19 @@ function TaskList({
   TaskList.propTypes = {
     onDeleted: PropTypes.func,
     onToggleDone: PropTypes.func,
-    data: PropTypes.arrayOf(PropTypes.object),
+    data: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number,
+        text: PropTypes.string,
+        status: PropTypes.instanceOf(Date),
+        isEditing: PropTypes.bool,
+        isCompleted: PropTypes.bool,
+      })
+    ),
   };
   return (
-
     <section className="main">
-      <ul className="todo-list">
-        {elements}
-      </ul>
+      <ul className="todo-list">{elements}</ul>
     </section>
   );
 }

@@ -1,55 +1,40 @@
-import NewTaskForm from "../new-task-form";
-import TaskList from "../task-list";
-import Footer from "../fotter";
-import './app.css';
-import { Component } from "react";
-export default class App extends Component {
+import React from 'react';
 
-  maxId = 0;
+import NewTaskForm from '../new-task-form';
+import TaskList from '../task-list';
+import Footer from '../fotter';
+
+import './app.css';
+
+export default class App extends React.Component {
   state = {
     data: [],
     filter: 'all',
-    editInputValue: ''
+    editInputValue: '',
   };
 
+  getTaskId = () => Math.floor(Math.random() * 1000);
+
   deletItem = (id) => {
-    
-    this.setState(({ data })=> {
-      const idx = data.findIndex((el)=> el.id === id);
+    this.setState(({ data }) => {
+      const idx = data.findIndex((el) => el.id === id);
 
-      const newArray = [
-        ...data.slice(0, idx),
-        ...data.slice(idx+1)
-      ]
+      const newArray = [...data.slice(0, idx), ...data.slice(idx + 1)];
       return {
-        data: newArray
-      }
-    })
-  }
-  
-  createTask (text) {
-    return {
-      text,
-      done: false,
-      status: new Date(),
-      id: this.maxId++,
-      isEditing: false,
-    }
-  }
+        data: newArray,
+      };
+    });
+  };
 
-  addItem = (text) =>{
+  addItem = (text) => {
     const newItem = this.createTask(text);
 
-    this.setState(({ data }) =>{
-      const newArr = [
-        ...data,
-        newItem
-      ];
+    this.setState(({ data }) => {
+      const newArr = [...data, newItem];
       return {
-        data: newArr
-      }
-    })
-    
+        data: newArr,
+      };
+    });
   };
 
   editTask = (id) => {
@@ -97,76 +82,82 @@ export default class App extends Component {
     }
   };
 
-  onToggleDone  = (id) => {
-    this.setState(({data})=>{
-      const idx = data.findIndex((el)=> el.id === id);
+  onToggleDone = (id) => {
+    this.setState(({ data }) => {
+      const idx = data.findIndex((el) => el.id === id);
       const oldTask = data[idx];
-      const newTask = {...oldTask,
-         done: !oldTask.done };
+      const newTask = { ...oldTask, done: !oldTask.done };
 
-      const newArray = [
-          ...data.slice(0, idx),
-          newTask,
-          ...data.slice(idx+1)
-        ];   
+      const newArray = [...data.slice(0, idx), newTask, ...data.slice(idx + 1)];
 
       return {
-        data: newArray
-      }
+        data: newArray,
+      };
     });
-  }
+  };
 
-  taskFilter(data, filter) {
-    if (filter === 'all') {
-      return data;
-    } else if (filter === 'active') {
-      return data.filter((item) => (!item.done));
-    } else if (filter === 'completed') {
-      return data.filter((item) => item.done);
-    }
-  }
+  clearCompleted = () => {
+    this.setState(({ data }) => {
+      const tasklits = data.filter((item) => !item.done);
+      return {
+        data: [...tasklits],
+      };
+    });
+  };
 
   onFilterChange = (filter) => {
     this.setState({ filter });
   };
 
-  clearCompleted = () => {
-    this.setState(({ data }) => {
-      const tasklits = data.filter(item => !item.done);
-      return {
-        data: [...tasklits]
-      }
-    });
+  taskFilter(data, filter) {
+    if (filter === 'all') {
+      return data;
+    }
+    if (filter === 'active') {
+      return data.filter((item) => !item.done);
+    }
+    if (filter === 'completed') {
+      return data.filter((item) => item.done);
+    }
+    return [];
   }
 
-  render  (){
-    let {data, filter,editInputValue} = this.state
-    const doneCount = this.state.data
-                      .filter((el) => el.done).length;
-    const todoCount = this.state.data.length - doneCount;
+  createTask(text) {
+    return {
+      text,
+      done: false,
+      status: new Date(),
+      id: this.getTaskId(),
+      isEditing: false,
+    };
+  }
+
+  render() {
+    const { data, filter, editInputValue } = this.state;
+    const doneCount = data.filter((el) => el.done).length;
+    const todoCount = data.length - doneCount;
 
     const visibleTasks = this.taskFilter(data, filter);
     return (
       <div>
-        <NewTaskForm
-        addItem={this.addItem}
-        ></NewTaskForm>
-        <TaskList data = {visibleTasks}
-        onDeleted={this.deletItem}
-        onToggleDone={this.onToggleDone}
-        onEdit={this.editTask}
-        value={editInputValue}
-        onChange={this.editInputValue}
-        onSubmit={this.changeTask}
-        ></TaskList>
-        <Footer doneCount={doneCount}
-                todoCount={todoCount}
-                filter={filter}
-                onFilterChange={this.onFilterChange}
-                clearCompleted={this.clearCompleted}>  
-                </Footer>
+        <NewTaskForm addItem={this.addItem} />
+        <TaskList
+          data={visibleTasks}
+          onDeleted={this.deletItem}
+          onToggleDone={this.onToggleDone}
+          onEdit={this.editTask}
+          value={editInputValue}
+          onChange={this.editInputValue}
+          onSubmit={this.changeTask}
+        />
+        <Footer
+          doneCount={doneCount}
+          todoCount={todoCount}
+          filter={filter}
+          onFilterChange={this.onFilterChange}
+          clearCompleted={this.clearCompleted}
+        />
       </div>
     );
-  };
+  }
 }
-  
